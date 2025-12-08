@@ -1,2 +1,2 @@
 # fracture
-a fractured programming language
+a random programming language
