@@ -1,3 +1,5 @@
+; Copryright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
+
 [Setup]
 AppName=Fracture
 AppVersion=1.0

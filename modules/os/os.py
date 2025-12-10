@@ -1,3 +1,5 @@
+# Copryright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
+
 # modules/os/os.py
 import sys
 import time
