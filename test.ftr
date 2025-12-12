@@ -10,5 +10,4 @@ os.console.write(test)
 os.os_help
 # TEST FRACTURE =================================
 fracture.version()
-logic.if_(test < 0)
 os.os_time.pause(3)

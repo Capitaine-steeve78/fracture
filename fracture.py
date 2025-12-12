@@ -1,4 +1,4 @@
-# Copryright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
+# Copyright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
 
 # pyinstaller --onefile --icon=fracture-logo.ico fracture.py
 # python.exe fracture.py test.ftr
@@ -21,42 +21,30 @@ BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 
 MODULES_DIR = os.path.join(BASE_DIR, "modules")
 
+# ---------------------------------------------------------------------------
+#  Trouver python portable intégré dans FracturePython/
+# ---------------------------------------------------------------------------
+def get_embedded_python():
+    return os.path.join(BASE_DIR, "FracturePython", "python.exe")
+
+EMBEDDED_PYTHON = get_embedded_python()
 
 # ---------------------------------------------------------------------------
-#  Trouver le python du venv
+#  Ajouter site-packages du Python portable au sys.path
 # ---------------------------------------------------------------------------
-def get_venv_python():
-    if os.name == "nt":
-        return os.path.join(BASE_DIR, "FractureEnv", "Scripts", "python.exe")
-    else:
-        return os.path.join(BASE_DIR, "FractureEnv", "bin", "python")
-
-
-VENV_PYTHON = get_venv_python()
-
-
-# ---------------------------------------------------------------------------
-#  Ajouter site-packages du venv au path Python
-# ---------------------------------------------------------------------------
-def patch_sys_path_for_venv():
-    if os.name == "nt":
-        site = os.path.join(BASE_DIR, "FractureEnv", "Lib", "site-packages")
-    else:
-        site = os.path.join(BASE_DIR, "FractureEnv", "lib", "pythonX.X", "site-packages")
-
+def patch_sys_path_for_embedded_python():
+    site = os.path.join(BASE_DIR, "FracturePython", "Lib", "site-packages")
     if os.path.isdir(site) and site not in sys.path:
         sys.path.insert(0, site)
 
-
-patch_sys_path_for_venv()
+patch_sys_path_for_embedded_python()
 
 # Stockage des modules chargés
 modules_loaded = {}
 variables = {}
 
-
 # ---------------------------------------------------------------------------
-#  Installation automatique des modules Python manquants (dans le venv)
+#  Installation automatique des modules Python manquants (dans Python portable)
 # ---------------------------------------------------------------------------
 def require_python_module(module_name):
     try:
@@ -67,14 +55,14 @@ def require_python_module(module_name):
         console_rich.print(f"[yellow]Dépendance Python '{module_name}' manquante → installation...[/yellow]")
 
         try:
-            subprocess.check_call([VENV_PYTHON, "-m", "pip", "install", module_name])
-            console_rich.print(f"[green]Module '{module_name}' installé dans le venv.[/green]")
+            subprocess.check_call([EMBEDDED_PYTHON, "-m", "pip", "install", module_name, "-t",
+                                   os.path.join(BASE_DIR, "FracturePython", "Lib", "site-packages")])
+            console_rich.print(f"[green]Module '{module_name}' installé dans Python portable.[/green]")
             return True
 
         except subprocess.CalledProcessError as e:
             console_rich.print(f"[red]Échec de l'installation du module '{module_name}' : {e}[/red]")
             return False
-
 
 # ---------------------------------------------------------------------------
 #  Analyse AST pour détecter les imports Python dans un module Fracture
@@ -87,16 +75,11 @@ def import_dependencies(module_path):
         tree = ast.parse(file_handle_ast.read(), filename=module_path)
 
     for node in ast.walk(tree):
-        # import xxx
         if isinstance(node, ast.Import):
             for n in node.names:
                 require_python_module(n.name)
-
-        # from xxx import yyy
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                require_python_module(node.module)
-
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            require_python_module(node.module)
 
 # ---------------------------------------------------------------------------
 #  Charger un module Fracture : modules/<nom>/<nom>.py
@@ -112,18 +95,16 @@ def load_module(name):
     import_dependencies(module_path)
 
     module = types.ModuleType(name)
-    with open(module_path, "r", encoding="utf-8") as file_handle_exec:
-        code = file_handle_exec.read()
+    with open(module_path, "r", encoding="utf-8") as fh:
+        code = fh.read()
 
     try:
-        # Exceptions limitées pour ne pas cacher de bugs graves
         exec(code, module.__dict__)
     except (SyntaxError, NameError, AttributeError, TypeError) as e:
         console_rich.print(f"[red]Erreur dans le module '{name}' : {e}[/red]")
         return
 
     modules_loaded[name] = module
-
 
 # ---------------------------------------------------------------------------
 #  Résoudre module.attr1.attr2
@@ -146,7 +127,6 @@ def resolve_path(path):
 
     return obj
 
-
 # ---------------------------------------------------------------------------
 #  Exécuter une ligne .ftr
 # ---------------------------------------------------------------------------
@@ -162,7 +142,6 @@ def execute_line(line_text):
         return
 
     if "logic" in modules_loaded and getattr(modules_loaded["logic"], "logic").skip:
-        # MAIS on autorise l’utilisation de logic.if_(), logic.else_(), logic.end()
         if not line.startswith("logic."):
             return
 
@@ -190,19 +169,15 @@ def execute_line(line_text):
 
         if args_part.startswith('"') and args_part.endswith('"'):
             arg = args_part[1:-1]
-            if callable(obj):
-                obj(arg)
+            if callable(obj): obj(arg)
         elif args_part:
             arg = variables.get(args_part, args_part)
-            if callable(obj):
-                obj(arg)
+            if callable(obj): obj(arg)
         else:
-            if callable(obj):
-                obj()
+            if callable(obj): obj()
 
     except (ValueError, AttributeError, TypeError) as e:
         console_rich.print(f"[red]Erreur : {e}[/red]")
-
 
 # ---------------------------------------------------------------------------
 #  Programme principal

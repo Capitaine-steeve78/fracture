@@ -1,5 +1,3 @@
-; Copryright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
-
 [Setup]
 AppName=Fracture
 AppVersion=1.0
@@ -16,8 +14,8 @@ Source: "fracture_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fracture.py"; DestDir: "{app}"; Flags: ignoreversion
 Source: "fracture-logo.ico"; DestDir: "{app}"; Flags: ignoreversion
 
-; VENV Windows complet
-Source: "FractureEnv\*"; DestDir: "{app}\FractureEnv"; Flags: recursesubdirs createallsubdirs ignoreversion
+; Python portable 3.13.9
+Source: "FracturePython\*"; DestDir: "{app}\FracturePython"; Flags: recursesubdirs createallsubdirs ignoreversion
 
 ; Modules Fracture
 Source: "modules\*"; DestDir: "{app}\modules"; Flags: recursesubdirs createallsubdirs ignoreversion
@@ -30,7 +28,6 @@ Name: "{commondesktop}\Fracture"; Filename: "{app}\fracture_launcher.exe"; IconF
 Name: "desktopicon"; Description: "Créer un raccourci sur le bureau"; GroupDescription: "Raccourcis"; Flags: unchecked
 
 [Registry]
-; Nettoyage complet avant d'installer l'association .ftr
 Root: HKCR; Subkey: ".ftr"; Flags: deletekey
 Root: HKCR; Subkey: "FractureFile"; Flags: deletekey
 
