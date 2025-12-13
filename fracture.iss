@@ -1,3 +1,5 @@
+; Copyright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
+
 [Setup]
 AppName=Fracture
 AppVersion=1.0
@@ -10,29 +12,27 @@ PrivilegesRequired=admin
 UninstallDisplayIcon={app}\fracture_launcher.exe
 
 [Files]
-Source: "fracture_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion
+; moteur
 Source: "fracture.py"; DestDir: "{app}"; Flags: ignoreversion
+
+; launcher compilé
+Source: "fracture_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion
+
+; icône
 Source: "fracture-logo.ico"; DestDir: "{app}"; Flags: ignoreversion
 
-; Python portable 3.13.9
-Source: "FracturePython\*"; DestDir: "{app}\FracturePython"; Flags: recursesubdirs createallsubdirs ignoreversion
+; venv complet
+Source: "venv\*"; DestDir: "{app}\venv"; Flags: recursesubdirs createallsubdirs ignoreversion
 
-; Modules Fracture
+; modules Fracture
 Source: "modules\*"; DestDir: "{app}\modules"; Flags: recursesubdirs createallsubdirs ignoreversion
 
 [Icons]
-Name: "{group}\Fracture"; Filename: "{app}\fracture_launcher.exe"; IconFilename: "{app}\fracture-logo.ico"; Tasks: desktopicon
-Name: "{commondesktop}\Fracture"; Filename: "{app}\fracture_launcher.exe"; IconFilename: "{app}\fracture-logo.ico"; Tasks: desktopicon
-
-[Tasks]
-Name: "desktopicon"; Description: "Créer un raccourci sur le bureau"; GroupDescription: "Raccourcis"; Flags: unchecked
+Name: "{commondesktop}\Fracture"; Filename: "{app}\fracture_launcher.exe"; IconFilename: "{app}\fracture-logo.ico"
 
 [Registry]
-Root: HKCR; Subkey: ".ftr"; Flags: deletekey
-Root: HKCR; Subkey: "FractureFile"; Flags: deletekey
-
-Root: HKCR; Subkey: ".ftr"; ValueType: string; ValueName: ""; ValueData: "FractureFile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "FractureFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\fracture-logo.ico"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "FractureFile\shell"; ValueType: string; ValueName: ""; ValueData: "run"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "FractureFile\shell\run\command"; ValueType: string; ValueName: ""; ValueData: """{app}\fracture_launcher.exe"" ""%1"""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "FractureFile\shell\edit\command"; ValueType: string; ValueName: ""; ValueData: "notepad.exe ""%1"""; Flags: uninsdeletevalue
+; extension .ftr
+Root: HKCR; Subkey: ".ftr"; ValueType: string; ValueData: "FractureFile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "FractureFile"; ValueType: string; ValueData: "Fracture Script"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "FractureFile\DefaultIcon"; ValueType: string; ValueData: "{app}\fracture-logo.ico"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "FractureFile\shell\open\command"; ValueType: string; ValueData: """{app}\fracture_launcher.exe"" ""%1"""; Flags: uninsdeletevalue

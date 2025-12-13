@@ -14,7 +14,8 @@ class Console:
 def os_help():
     sys.stdout.write("commande d'aide du module os \n")
 
-class Time:
+
+class OsTime:
     @staticmethod
     def pause(seconds):
         time.sleep(int(seconds))
@@ -22,4 +23,4 @@ class Time:
 
 # Créer une instance globale pour que main.py puisse y accéder
 console = Console()
-os_time = Time()
+os_time = OsTime()
