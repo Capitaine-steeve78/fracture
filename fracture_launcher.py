@@ -1,19 +1,19 @@
 # 2025 Copyright, FractureV1 By Capitaine-steeve78 official repo : https://github.com/Capitaine-steeve78/fracture
 
-import os
-import subprocess
 import sys
+import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PYTHON = os.path.join(BASE_DIR, "venv", "Scripts", "python.exe")
-FRACTURE = os.path.join(BASE_DIR, "fracture.py")
+# pour gérer PyInstaller --onefile
+if getattr(sys, 'frozen', False):
+    BASE_DIR = sys._MEIPASS  # dossier temporaire PyInstaller
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-if len(sys.argv) < 2:
-    input("Aucun fichier .ftr fourni.")
-    sys.exit(1)
+EMBEDDED_PYTHON = os.path.join(BASE_DIR, "venv", "Scripts", "python.exe")
 
-subprocess.call([PYTHON, FRACTURE, sys.argv[1]])
 
 
 
 # pyinstaller --onefile --noconsole fracture_launcher.py
+
+# pyinstaller --onefile --console fracture_launcher.py

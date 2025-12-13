@@ -3,7 +3,6 @@
 # modules/fracture/fracture.py
 
 import sys
-
 ftr_version = "1.0.0.0-PV1-BETA-INDEV"
 
 
