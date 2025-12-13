@@ -17,7 +17,7 @@ console_rich = Console()
 # ---------------------------------------------------------------------------
 #  BASE_DIR = dossier du script ou dossier temporaire PyInstaller (_MEIPASS)
 # ---------------------------------------------------------------------------
-BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MODULES_DIR = os.path.join(BASE_DIR, "modules")
 
@@ -25,7 +25,7 @@ MODULES_DIR = os.path.join(BASE_DIR, "modules")
 #  Trouver python portable intégré dans FracturePython/
 # ---------------------------------------------------------------------------
 def get_embedded_python():
-    return os.path.join(BASE_DIR, "FracturePython", "python.exe")
+    return os.path.join(BASE_DIR, "venv", "Scripts", "python.exe")
 
 EMBEDDED_PYTHON = get_embedded_python()
 
@@ -33,7 +33,7 @@ EMBEDDED_PYTHON = get_embedded_python()
 #  Ajouter site-packages du Python portable au sys.path
 # ---------------------------------------------------------------------------
 def patch_sys_path_for_embedded_python():
-    site = os.path.join(BASE_DIR, "FracturePython", "Lib", "site-packages")
+    site = os.path.join(BASE_DIR, "venv", "Lib", "site-packages")
     if os.path.isdir(site) and site not in sys.path:
         sys.path.insert(0, site)
 

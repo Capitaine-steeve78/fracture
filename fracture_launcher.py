@@ -4,31 +4,16 @@ import os
 import subprocess
 import sys
 
-def main():
-    base = os.path.dirname(os.path.abspath(sys.executable))
-    python_embedded = os.path.join(base, "FracturePython", "python.exe")
-    script = os.path.join(base, "fracture.py")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PYTHON = os.path.join(BASE_DIR, "venv", "Scripts", "python.exe")
+FRACTURE = os.path.join(BASE_DIR, "fracture.py")
 
-    # Vérifications
-    if not os.path.isfile(python_embedded):
-        print(f"Python portable introuvable : {python_embedded}")
-        input("Appuyez sur ENTRÉE pour fermer...")
-        return
+if len(sys.argv) < 2:
+    input("Aucun fichier .ftr fourni.")
+    sys.exit(1)
 
-    if not os.path.isfile(script):
-        print(f"Script fracture.py introuvable : {script}")
-        input("Appuyez sur ENTRÉE pour fermer...")
-        return
+subprocess.call([PYTHON, FRACTURE, sys.argv[1]])
 
-    # Construire la commande avec tous les arguments
-    args = " ".join(f'"{arg}"' for arg in sys.argv[1:])
-    cmd = f'"{python_embedded}" "{script}" {args}'
-
-    # Exécuter fracture.py et garder la console ouverte si double-clic
-    subprocess.call(cmd, shell=True)
-
-if __name__ == "__main__":
-    main()
 
 
 # pyinstaller --onefile --noconsole fracture_launcher.py
