@@ -4,30 +4,28 @@ import os
 import subprocess
 import sys
 
-
 def main():
-    # Dossier où se trouve fracture_launcher.exe
     base = os.path.dirname(os.path.abspath(sys.executable))
-
-    # Python portable embarqué
     python_embedded = os.path.join(base, "FracturePython", "python.exe")
-
-    # Script principal de Fracture
     script = os.path.join(base, "fracture.py")
 
     # Vérifications
     if not os.path.isfile(python_embedded):
-        raise FileNotFoundError(f"Python portable introuvable : {python_embedded}")
+        print(f"Python portable introuvable : {python_embedded}")
+        input("Appuyez sur ENTRÉE pour fermer...")
+        return
 
     if not os.path.isfile(script):
-        raise FileNotFoundError(f"Script fracture.py introuvable : {script}")
+        print(f"Script fracture.py introuvable : {script}")
+        input("Appuyez sur ENTRÉE pour fermer...")
+        return
 
-    # Commande finale : python.exe fracture.py <arguments>
-    cmd = [python_embedded, script] + sys.argv[1:]
+    # Construire la commande avec tous les arguments
+    args = " ".join(f'"{arg}"' for arg in sys.argv[1:])
+    cmd = f'"{python_embedded}" "{script}" {args}'
 
-    # Lancer fracture.py avec le Python portable
-    subprocess.call(cmd)
-
+    # Exécuter fracture.py et garder la console ouverte si double-clic
+    subprocess.call(cmd, shell=True)
 
 if __name__ == "__main__":
     main()
